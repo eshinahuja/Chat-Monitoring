@@ -9,7 +9,7 @@ from cryptography.hazmat.primitives import hashes
 from email_validator import validate_email, EmailNotValidError
 import joblib
 import hashlib
-from BERT import train_model, load_model, predict_message  # Import BERT functions
+from loisticRegression import train_model, load_model, predict_message
 import os
 
 password = os.getenv("MY_SECRET_PASSWORD")
