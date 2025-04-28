@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        #chat-window {
+            border: 1px solid #ccc;
+            height: 400px;
+            overflow-y: scroll;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: white;
+        }
+        #message-form {
+            display: flex;
+        }
+        #message {
+            flex: 1;
+            padding: 10px;
+        }
+        #send {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chat Room</h1>
+    <div id="chat-window"></div>
+    <form id="message-form">
+        <input type="text" id="message" placeholder="Type your message..." required>
+        <button type="submit" id="send">Send</button>
+    </form>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+
+        // Send message to the server
+        const form = document.getElementById('message-form');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const messageInput = document.getElementById('message');
+            const message = messageInput.value;
+
+            // Emit the message to the server
+            socket.emit('send_message', { message: message });
+
+            // Clear the input
+            messageInput.value = '';
+        });
+
+        // Receive and display the decrypted message
+        socket.on('display_message', function(data) {
+            // Display the received message along with the user's email
+            let chatWindow = document.getElementById('chat-window');
+            let newMessage = document.createElement('div');
+            newMessage.innerText = `${data.email}: ${data.message}`;
+            chatWindow.appendChild(newMessage);
+            chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom
+        });
+
+        // Receive blocked message notification
+        socket.on('message_blocked', function(data) {
+            let chatWindow = document.getElementById('chat-window');
+            let newMessage = document.createElement('div');
+            newMessage.innerText = `Server: ${data.message}`;
+            chatWindow.appendChild(newMessage);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        });
+
+
+
+    </script>
+</body>
+</html>
